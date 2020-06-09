@@ -1,13 +1,13 @@
-from event import Event
-from coordinate import Coordinate1D, Coordinate3D
-from mesh import Mesh1D, Mesh3D
-from velocity_model import VelocityModel1D, VelocityModel3D
-from travel_time import TravelTimeTable
-from perturbation import Perturbation
-from residual import ResidualVector
-from derivative import Derivative
-from environment import CommonEnv, SphraydervEnv, LocEnv, RunlsqrEnv, MakenewmodEnv
-import _FDtomoC
+from semanticModel.event import Event
+from semanticModel.coordinate import Coordinate1D, Coordinate3D
+from semanticModel.mesh import Mesh1D, Mesh3D
+from semanticModel.velocity_model import VelocityModel1D, VelocityModel3D
+from semanticModel.travel_time import TravelTimeTable
+from semanticModel.perturbation import Perturbation
+from semanticModel.residual import ResidualVector
+from semanticModel.derivative import Derivative
+from semanticModel.environment import CommonEnv, SphraydervEnv, LocEnv, RunlsqrEnv, MakenewmodEnv
+from semanticModel import _FDtomoC
 from mpi4py import MPI
 
 class TomographyBuilder(object):

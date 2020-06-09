@@ -25,9 +25,9 @@ ffi.set_source("_FDtomoC",
         #include "common/earthquake.h"
     ''' ,
     #sources = [],
-    include_dirs = [path + '/../../include'],
+    include_dirs = [path + '/../include'],
     libraries =['_common', 'makenewmod', 'runlsqr', 'sphrayderv', 'sphfdloc', 'sphfd', 'make1d'],
-    library_dirs = [path + '/../../build/lib/common', path + '/../../build/lib/FDtomo']
+    library_dirs = [path + '/../build/lib/common', path + '/../build/lib/FDtomo']
     )
 
 
