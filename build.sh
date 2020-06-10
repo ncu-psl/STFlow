@@ -3,7 +3,7 @@
 mkdir build
 cd build
 cmake ..
-make -j # if you get Internal Compiler Error(ICE), try make without -j
+make -j # it will generate needed c libraries for STFlow
 
-cd ..
-mv run.sh ./build/
+cd ../semanticModel
+python bindToPython.py #generate python extension module for STFlow
