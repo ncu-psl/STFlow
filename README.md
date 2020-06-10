@@ -1,28 +1,13 @@
-# FDtomoC
-* This is the revised and optimized version of [FDtomo] in C language
-* Documents and experiment data are collected in [data]
-* Any programming issue or logic issue should be tracked in [issues]
-
-[FDtomo]: https://github.com/ncu-psl/FDtomo
-[data]: https://github.com/ncu-psl/FDtomo/tree/master/data
-[issues]: https://github.com/ncu-psl/FDtomoC/issues
-
-## Variants
-* [FDtomoPy] (in Python, under development)
-
-[FDtomoPy]: https://github.com/ncu-psl/FDtomoPy
+# STFlow
+* STFlow is the tool for seismic tomography that provides a high performance and abstraction of DSL. 
 
 ## How to download
 ```bash
 # clone source code
 cd <where you want FDtomoC to live>
-git clone https://github.com/ncu-psl/FDtomoC.git
+git clone https://github.com/ncu-psl/STFlow.git
 
-# clone test data
-git clone https://github.com/ncu-psl/FDtomo.git
-cd FDtomoC
-cp -r ../FDtomo/data .
-unzip data/cwb_12-15_S/runs_files/arrivals/cwb_12-15_S.zip -d data/cwb_12-15_S/runs_files/arrivals/
+cd STFlow
 ```
 
 ## How to build
@@ -38,8 +23,13 @@ export CC=gcc
 bash build.sh
 ```
 
-## How to run
+## How to use
 ```sh
-cd build
-bash run.sh "../data/small/FDtomo.spec"
+cd demo/
+
+# there exist three demos, you can execute the scripts in the folder of different examples.
+# For example :
+# cd small
+# python demo_small.py
+
 ```
