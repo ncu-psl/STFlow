@@ -159,8 +159,10 @@ class Event(object):
 
         data = _FDtomoC.lib.sphrayderv(modelField, table_tmp, event_tmp, event_size, station_tmp, table_size, sphraydervEnvField, commonEnvField)
 
-        der = Derivative(data[0].mat)
-        residual_vector = ResidualVector(data[0].b)
+        der = Derivative()
+        der.derivativeField = data[0].mat
+        residual_vector = ResidualVector()
+        residual_vector.residualField = data[0].b
         return der, residual_vector
 
     def runlsqr(self, derivative, residual_vector, runlsqr_env):
