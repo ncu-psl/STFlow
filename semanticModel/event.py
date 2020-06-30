@@ -155,7 +155,7 @@ class Event(object):
         station_tmp = _FDtomoC.ffi.new("Station[]", stationFieldArray)
 
         sphraydervEnvField = sphrayderv_env.sphraydervEnvField
-        commonEnvField = sphrayderv_env.commonEnvField
+        commonEnvField = sphrayderv_env.commonEnv.commonEnvField
 
         data = _FDtomoC.lib.sphrayderv(modelField, table_tmp, event_tmp, event_size, station_tmp, table_size, sphraydervEnvField, commonEnvField)
 
@@ -168,7 +168,7 @@ class Event(object):
         residualField = residual_vector.residualField
 
         runlsqrEnvField = runlsqr_env.runlsqrEnvField
-        commonEnvField = runlsqr_env.commonEnvField
+        commonEnvField = runlsqr_env.commonEnv.commonEnvField
 
         data = _FDtomoC.ffi.new("SPHRAYDERV_DATA *", {"mat" : derivativeField, "b" : residualField})
         perturbationField = _FDtomoC.lib.runlsqr(data, runlsqrEnvField, commonEnvField)

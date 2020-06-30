@@ -171,14 +171,14 @@ class TomographyBuilder(object):
                 new_event_size = _FDtomoC.lib.getEventCount(eventListField)
                 eventFieldArray = _FDtomoC.lib.EventList2Arr(eventListField)
 
-                data = _FDtomoC.lib.sphrayderv(CoarseVpModel3D.modelField, Alltable, eventFieldArray, new_event_size, stationFieldArrayPtr, table_size, sphrayderv_env.sphraydervEnvField, sphrayderv_env.commonEnvField)
-                perturbation = _FDtomoC.lib.runlsqr(data, runlsqr_env.runlsqrEnvField, runlsqr_env.commonEnvField)
+                data = _FDtomoC.lib.sphrayderv(CoarseVpModel3D.modelField, Alltable, eventFieldArray, new_event_size, stationFieldArrayPtr, table_size, sphrayderv_env.sphraydervEnvField, sphrayderv_env.commonEnv.commonEnvField)
+                perturbation = _FDtomoC.lib.runlsqr(data, runlsqr_env.runlsqrEnvField, runlsqr_env.commonEnv.commonEnvField)
 
                 vpModelFieldPtr = _FDtomoC.ffi.new("velocityModel3D *", CoarseVpModel3D.modelField)
                 vsModelFieldPtr = _FDtomoC.ffi.new("velocityModel3D *", CoarseVsModel3D.modelField)
 
                 _FDtomoC.lib.makenewmod(coarseCoordinate3D.coordinateField, vpModelFieldPtr, \
-                            vsModelFieldPtr, perturbation, table_size, makenewmod_env.makenewmodEnvField, makenewmod_env.commonEnvField)
+                            vsModelFieldPtr, perturbation, table_size, makenewmod_env.makenewmodEnvField, makenewmod_env.commonEnv.commonEnvField)
                 CoarseVpModel3D.modelField = vpModelFieldPtr[0]
                 CoarseVsModel3D.modelField = vsModelFieldPtr[0]
 
