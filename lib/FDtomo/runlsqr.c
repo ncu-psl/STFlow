@@ -238,8 +238,9 @@ RUNLSQR_DATA *runlsqr(SPHRAYDERV_DATA *SPHRAYDERV, RunlsqrEnv runlsqr_env, Commo
 // c	  x(j) = x(j)/sc
 // c	  se(j) = se(j)/sc
 // c200	continue
+	RUNLSQR->jndx = (int *)malloc(sizeof(int) * maxmbl);
+	memcpy(RUNLSQR->jndx, jndx, maxmbl);
 	RUNLSQR->n = n;
-	RUNLSQR->jndx = jndx;
 	RUNLSQR->x = x;
 	RUNLSQR->se = se;
 
