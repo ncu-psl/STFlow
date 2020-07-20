@@ -342,3 +342,29 @@ Point3D searchFineBase(Point3D point, Coordinate3D coordinate){
     free(gz);
     return base;
 }
+
+Point3DDouble createOrigin(char *spec_file){
+    Point3DDouble origin;
+    char *mvals[3] = { "x0\0", "y0\0", "z0\0"};
+    double *varList[4] = {&origin.x, &origin.y, &origin.z};
+    char pval[MAXSTRLEN + 1];
+    int len, ierr;
+	sscanf(spec_file, "%s", spec_file);
+    FILE *fp_spc;
+
+    fp_spc = fopen(spec_file, "r");
+	if (!fp_spc) {
+		printf("(Error in grid.c)read createOrigin file error.\n");
+		assert(0);
+	}
+
+    for(int i = 0; i < 3; i++){
+        get_vars(fp_spc, mvals[i], pval, &len, &ierr);
+		if (ierr == 1) {
+			read_error(mvals[i], "variable", fp_spc);
+		}            
+        sscanf(pval, "%lf", varList[i]);
+    }
+
+    return origin;
+}

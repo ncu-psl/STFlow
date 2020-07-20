@@ -47,6 +47,7 @@ def grid_header():
     float *getYAxis(Coordinate3D);
     float *getZAxis(Coordinate3D);
     Point3D getPoint3D(Point3D, Coordinate3D);
+    Point3DDouble createOrigin(char *);
     Mesh1D createMesh1D(int, int *);
     Mesh3D createMesh3D(Point3D, int *, int *, int *);
     Mesh3D setMesh3D(char *);

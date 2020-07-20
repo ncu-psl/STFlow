@@ -32,3 +32,10 @@ class PointDouble(object):
         self.x = self.pointField.x
         self.y = self.pointField.y
         self.z = self.pointField.z
+
+    def createOrigin(self, file = None):
+        origin = PointDouble()
+        tmp = _FDtomoC.ffi.new("char[]", file.encode('ascii'))
+        origin.pointField = _FDtomoC.lib.createOrigin(tmp)
+        origin.getClass()
+        return origin
