@@ -4,9 +4,9 @@ from point import Point
 import _FDtomoC
 
 class Mesh(object):
-    def __init__(self, numberOfNode = None, igrid = None):
+    def __init__(self, numberOfNode = None, grid = None):
         self.numberOfNode = numberOfNode
-        self.igrid = igrid
+        self.grid = grid
         self.meshField = None
 
     @abc.abstractmethod
@@ -30,8 +30,8 @@ class Mesh(object):
         return NotImplemented
 
 class Mesh1D(Mesh):
-    def create(self, file = None, numberOfNode = None, igrid = None):
-        mesh = Mesh1D(numberOfNode, igrid)
+    def create(self, file = None, numberOfNode = None, grid = None):
+        mesh = Mesh1D(numberOfNode, grid)
         mesh.meshField = mesh.getField()
         return mesh
 
@@ -39,9 +39,9 @@ class Mesh1D(Mesh):
         return self.numberOfNode
 
     def getField(self):
-        igrid = _FDtomoC.ffi.new("int[]", self.igrid)
+        grid = _FDtomoC.ffi.new("int[]", self.grid)
         #meshFieldPtr = _FDtomoC.ffi.new("Mesh1D *", {'numberOfNode' : self.numberOfNode, 'igrid' : igrid})
-        meshField = _FDtomoC.lib.createMesh1D(self.numberOfNode, igrid)
+        meshField = _FDtomoC.lib.createMesh1D(self.numberOfNode, grid)
         return meshField
 
     def getClass(self):
