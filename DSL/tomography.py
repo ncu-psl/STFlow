@@ -14,6 +14,10 @@ class TomographyBuilder(object):
     def __init__(self):
         self.event_list = []
         self.station_list = []
+        self.coarse_vp_model3D = None
+        self.coarse_vs_model3D = None
+        self.fine_vp_model3D = None
+        self.fine_vs_model3D = None
         self.event_builder = None
         self.velocity_model_builder = None
         self.environment = None
@@ -38,9 +42,16 @@ class TomographyBuilder(object):
                 self.station_list.extend(station)
             else:
                 self.station_list.append(station)
-        return self
+            return self
     
-    def VelocityModel(self, velocity_model = None):
+    def VelocityModel(self, coarse_vp_model3D = None, coarse_vs_model3D = None, fine_vp_model3D = None, fine_vs_model3D = None):
+        if(coarse_vp_model3D != None) and (coarse_vs_model3D != None) and (fine_vp_model3D != None) and (fine_vs_model3D != None):
+            self.coarse_vp_model3D = coarse_vp_model3D
+            self.coarse_vs_model3D = coarse_vs_model3D
+            self.fine_vp_model3D = fine_vp_model3D
+            self.fine_vs_model3D = fine_vs_model3D
+            return self
+
         self.velocity_model_builder = VelocityModelBuilder(self)
         return self.velocity_model_builder
 
@@ -57,28 +68,22 @@ class TomographyBuilder(object):
         runlsqr_env = self.environment['runlsqr_env']
         makenewmod_env = self.environment['makenewmod_env']
         
-        coarseMesh3D = self.velocity_model_builder.coordinateBuilder.coarse_mesh
-        fineMesh3D = self.velocity_model_builder.coordinateBuilder.fine_mesh
-        origin = self.velocity_model_builder.coordinateBuilder.origin
-        space = self.velocity_model_builder.coordinateBuilder.space
+        coarseMesh3D = self.coarse_vp_model3D.coordinate.origin.x
+        coarseMesh3D = self.coarse_vp_model3D.coordinate.mesh
+        origin = self.coarse_vp_model3D.coordinate.origin
+        space = self.coarse_vp_model3D.coordinate.space
         
-        numberOfNode = int(coarseMesh3D.meshField.numberOfNode.z)
-        igrid = _FDtomoC.ffi.unpack(coarseMesh3D.meshField.gridz, numberOfNode - 1)
+        numberOfNode = int(coarseMesh3D.numberOfNode.z)
+        grid = coarseMesh3D.gridz
         zSpace = int(space.z)
         zOrigin = int(origin.z)
-        coarseMesh1D = Mesh1D().create(numberOfNode = numberOfNode, igrid = igrid)
-        cooarseCoordinate1D = Coordinate1D().create(coarseMesh1D, zSpace, zOrigin)
+        coarseMesh1D = Mesh1D().create(numberOfNode = numberOfNode, grid = grid)
         
-        vpModel1D = self.velocity_model_builder.vp_model
-        vsModel1D = self.velocity_model_builder.vs_model
-        coarseVpModel1D = vpModel1D.transform(cooarseCoordinate1D)
-        coarseVsModel1D = vsModel1D.transform(cooarseCoordinate1D)
-        
-        coarseCoordinate3D = Coordinate3D().create(coarseMesh3D, space, origin)
-        CoarseVpModel3D = VelocityModel3D().create(coarseCoordinate3D, coarseVpModel1D)
-        CoarseVsModel3D = VelocityModel3D().create(coarseCoordinate3D, coarseVsModel1D)
+        CoarseVpModel3D = self.coarse_vp_model3D
+        CoarseVsModel3D = self.coarse_vs_model3D
 
-        fineCoordinate3D = Coordinate3D().create(fineMesh3D, space, origin)
+        coarseCoordinate3D = Coordinate3D().create(coarseMesh3D, space, origin)
+        fineCoordinate3D = self.fine_vp_model3D.coordinate
 
         for iteration_count in range(count):
             fineVpModel3D = CoarseVpModel3D.transform(fineCoordinate3D)
@@ -258,33 +263,55 @@ class EventBuilder():
         
 class VelocityModelBuilder():
     def __init__(self, tomography_builder):
-        self.vp_model = None
-        self.vs_model = None
-        self.coordinate = None
+        self.vp_model1D = None
+        self.vs_model1D = None
+        self.coarse_coordinate3D = None
+        self.fine_coordinate3D = None
         self.coordinateBuilder = None
         self.tomography_builder = tomography_builder
         
     def __getattr__(self, name):
         def _method_missing(*args, **kwargs):
             if(name == 'execute'):
+                self.tomography_builder.coarse_vp_model3D, self.tomography_builder.coarse_vs_model3D, self.tomography_builder.fine_vp_model3D, self.tomography_builder.fine_vs_model3D \
+                = self.getValue()    
                 return self.tomography_builder.execute(*args, **kwargs)
 
         return _method_missing
         
     def ReferenceModel(self, vp_model, vs_model):
-        self.vp_model = vp_model
-        self.vs_model = vs_model
+        self.vp_model1D = vp_model
+        self.vs_model1D = vs_model
         return self
 
-    def Coordinate(self, coordinate = None):
+    def Coordinate(self, coarse_coordinate3D = None, fine_coordinate3D = None):
+        if(coarse_coordinate3D != None) and ((fine_coordinate3D != None)):
+            self.coarse_coordinate3D = coarse_coordinate3D
+            self.fine_coordinate3D = fine_coordinate3D
+            return self
+
         self.coordinateBuilder = CoordinateBuilder(self)
         return  self.coordinateBuilder
     
     def getValue(self):
-        if (self.coordinateBuilder != None):
-            self.coordinate = self.coordinateBuilder.getValue()
-        
-        return [self.coordinate, self.reference_model]
+        coarse_coordinate3D = self.coarse_coordinate3D
+        fine_coordinate3D = self.fine_coordinate3D
+        numberOfNode = self.coarse_coordinate3D.mesh.numberOfNode
+        origin = self.coarse_coordinate3D.origin
+        space = self.coarse_coordinate3D.space
+        numberOfNode = int(numberOfNode.z)
+        gridz = coarse_coordinate3D.mesh.gridz
+        zSpace = space.z
+        zOrigin = origin.z
+        coarseMesh1D = Mesh1D().create(numberOfNode = numberOfNode, grid = gridz)
+        cooarseCoordinate1D = Coordinate1D().create(coarseMesh1D, zSpace, zOrigin)
+        coarseVpModel1D = self.vp_model1D.transform(cooarseCoordinate1D)
+        coarseVsModel1D = self.vs_model1D.transform(cooarseCoordinate1D)
+        CoarseVpModel3D = VelocityModel3D().create(coarse_coordinate3D, coarseVpModel1D)
+        CoarseVsModel3D = VelocityModel3D().create(coarse_coordinate3D, coarseVsModel1D)
+        fineVpModel3D = CoarseVpModel3D.transform(fine_coordinate3D)
+        fineVsModel3D = CoarseVsModel3D.transform(fine_coordinate3D)
+        return CoarseVpModel3D, CoarseVsModel3D, fineVpModel3D, fineVsModel3D
 
 class EarthquakeBuilder():
     def __init__(self, event_builder):
@@ -348,21 +375,23 @@ class ObservationBuilder():
 class CoordinateBuilder():
     def __init__(self, velocity_model_builder):
         self.velocity_model_builder = velocity_model_builder
-        self.coarse_mesh = None
-        self.fine_mesh = None
+        self.coarse_mesh3D = None
+        self.fine_mesh3D = None
         self.origin = None
         self.space = None
 
     def __getattr__(self, name):
         def _method_missing(*args, **kwargs):
             if(name == 'ReferenceModel'):
+                self.velocity_model_builder.coarse_coordinate3D, self.velocity_model_builder.fine_coordinate3D = \
+                self.getValue()
                 return self.velocity_model_builder.ReferenceModel(args[0], args[1])
 
         return _method_missing    
 
-    def Mesh(self, coarse_mesh, fine_mesh):
-        self.coarse_mesh = coarse_mesh
-        self.fine_mesh = fine_mesh
+    def Mesh(self, coarse_mesh3D, fine_mesh3D):
+        self.coarse_mesh3D = coarse_mesh3D
+        self.fine_mesh3D = fine_mesh3D
         return self
     
     def Origin(self, origin):
@@ -374,8 +403,11 @@ class CoordinateBuilder():
         return self
 
     def getValue(self):
-        self.cooridinate.append([self.mesh, self.origin, self.space])
-        return self.cooridinate
+        origin = self.origin
+        space = self.space
+        coarseCoordinate3D = Coordinate3D().create(self.coarse_mesh3D, space, origin)
+        fineCoordinate3D = Coordinate3D().create(self.fine_mesh3D, space, origin)
+        return coarseCoordinate3D, fineCoordinate3D
 
 
     
