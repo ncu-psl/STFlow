@@ -68,7 +68,7 @@ TomographyBuilder() \
   .execute(mode = 'Seq', count = 1)   
 
 ```
-而具體的參數資料型態，請參考wiki的內容。
+而上述的的參數，可能不只含有一種資料型態，詳細內容請參考wiki。
 
 ## Example :
 
