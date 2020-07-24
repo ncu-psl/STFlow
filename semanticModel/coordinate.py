@@ -5,10 +5,10 @@ from point import PointDouble
 import _FDtomoC
 
 class Coordinate(object):
-    def __init__(self, mesh = None, space = None,  origin = None):
-        self.mesh = mesh 
-        self.space = space
-        self.origin = origin
+    def __init__(self):
+        self.mesh = None 
+        self.space = None
+        self.origin = None
         self.coordinateField = None
 
     @abc.abstractmethod
@@ -24,15 +24,24 @@ class Coordinate(object):
         return NotImplemented
 
 class Coordinate1D(Coordinate):
+    def __init__(self):
+        self.mesh = Mesh1D() 
+        self.space = None
+        self.origin = None
+        self.coordinateField = None
+
     def create(self, mesh = None, space = None, origin = None, file = None):
-        coordinate = Coordinate1D(mesh, space, origin)
+        coordinate = Coordinate1D()
+        coordinate.mesh = mesh
+        coordinate.space = space
+        coordinate.origin = origin
         coordinate.coordinateField = coordinate.getField()
         coordinate.mesh.meshField = coordinate.coordinateField.mesh
         return  coordinate
 
     def getField(self):
         meshField = self.mesh.getField()
-        coordinateField = _FDtomoC.lib.createCoordinate(meshField, self.space, self.origin)
+        coordinateField = _FDtomoC.lib.createCoordinate(meshField, int(self.space), int(self.origin))
         '''
         coordinateFieldPtr = _FDtomoC.ffi.new("Coordinate1D *", {'mesh'   : meshField, \
                                                                  'origin' : self.origin, \
@@ -49,10 +58,10 @@ class Coordinate1D(Coordinate):
 
 
 class Coordinate3D(Coordinate):
-    def __init__(self, mesh = None, space = None,  origin = None):
-        self.mesh = mesh 
-        self.space = space
-        self.origin = origin
+    def __init__(self):
+        self.mesh = Mesh3D() 
+        self.space = PointDouble()
+        self.origin = PointDouble()
         self.coordinateField = None
 
     def create(self, mesh = None, space = None, origin = None, file = None):
@@ -70,7 +79,10 @@ class Coordinate3D(Coordinate):
             coordinate.getClass()
             return coordinate
 
-        coordinate = Coordinate3D(mesh, space, origin)
+        coordinate = Coordinate3D()
+        coordinate.mesh = mesh 
+        coordinate.space = space
+        coordinate.origin = origin
         coordinate.coordinateField = coordinate.getField()
         return coordinate
 

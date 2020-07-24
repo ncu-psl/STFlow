@@ -173,8 +173,9 @@ class Event(object):
         commonEnvField = runlsqr_env.commonEnv.commonEnvField
 
         data = _FDtomoC.ffi.new("SPHRAYDERV_DATA *", {"mat" : derivativeField, "b" : residualField})
-        perturbationField = _FDtomoC.lib.runlsqr(data, runlsqrEnvField, commonEnvField)
-        perturbation = Perturbation(perturbationField)
+        perturbation = Perturbation()
+        perturbation.perturbationField = _FDtomoC.lib.runlsqr(data, runlsqrEnvField, commonEnvField)
+        perturbation.getClass()
         return perturbation
 
 class Earthquake(object):
@@ -201,7 +202,7 @@ class Observation(object):
         self.observationField = None
 
     def getClass(self):
-        self.time.getClass()
+        #self.time.getClass()
         station_name = _FDtomoC.ffi.new("char[]", self.station_name)
         #self.setting.event_id = _FDtomoC.ffi.string(self.event)
 
