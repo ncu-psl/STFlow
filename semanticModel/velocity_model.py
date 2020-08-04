@@ -5,7 +5,7 @@ import _FDtomoC
 
 class VelocityModel(object):
     def __init__(self):
-        self.coordinate = None
+        self.coordinate = Coordinate1D()
         self.velocity = None
         self.modelField = None
         self.modelFieldPtr = None
@@ -20,14 +20,23 @@ class VelocityModel(object):
 
 
 class VelocityModel1D(VelocityModel):
-    def setVelocityModel(self, file, vpModel, vsModel):
+    def loadVpVs(self, file):
+        vpModel = VelocityModel1D()
+        vsModel = VelocityModel1D()
         interp = _FDtomoC.ffi.new("char *")
         vpModelField = _FDtomoC.ffi.new("velocityModel1D *")
         vsModelField = _FDtomoC.ffi.new("velocityModel1D *")
         tmp = _FDtomoC.ffi.new("char[]", file.encode('ascii'))
         _FDtomoC.lib.readVelocityModel1D(tmp, vpModelField, vsModelField, interp)
         vpModel.modelField = vpModelField[0]
+        vpModel.coordinate.coordinateField = vpModelField[0].coordinate
+        vpModel.coordinate.mesh.meshField = vpModelField[0].coordinate.mesh
         vsModel.modelField = vsModelField[0]
+        vsModel.coordinate.coordinateField = vsModelField[0].coordinate
+        vsModel.coordinate.mesh.meshField = vsModelField[0].coordinate.mesh
+        vpModel.getClass()
+        vsModel.getClass()
+        return vpModel, vsModel
 
     def transform(self, coordinate1D):
         model = VelocityModel1D()
@@ -37,6 +46,11 @@ class VelocityModel1D(VelocityModel):
         tmp = _FDtomoC.ffi.new("char[]", tmp.encode('ascii'))
         model.modelField = _FDtomoC.lib.transform1D(coordinate1D.coordinateField, self.modelField, tmp)
         return model        
+        
+    def getClass(self):
+        self.coordinate.getClass()
+        size = self.coordinate.mesh.numberOfNode
+        self.velocity = _FDtomoC.ffi.unpack(self.modelField.velocity, int(size))    
 
 
 class VelocityModel3D(VelocityModel):

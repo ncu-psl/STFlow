@@ -46,7 +46,7 @@ class Mesh1D(Mesh):
 
     def getClass(self):
         self.numberOfNode = self.meshField.numberOfNode
-        self.igrid = _FDtomoC.ffi.unpack(self.meshField.igrid)
+        self.grid = _FDtomoC.ffi.unpack(self.meshField.grid, int(self.numberOfNode))
 
 class Mesh3D(Mesh):
     def __init__(self, numberOfNode = None, gridx = None, gridy = None, gridz = None):

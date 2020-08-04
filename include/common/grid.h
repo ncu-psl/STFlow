@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct{
     int numberOfNode;
-    int *igrid;
+    int *grid;
 }Mesh1D; 
 
 typedef struct{

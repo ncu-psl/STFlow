@@ -17,7 +17,7 @@ def grid_header():
 
     typedef struct{
         int numberOfNode;
-        int *igrid;
+        int *grid;
     }Mesh1D; 
 
     typedef struct{

@@ -8,7 +8,7 @@ float *getAxis(Coordinate1D coordinate){
     float *points = (float *)malloc(sizeof(float) * numberOfPoints);
     points[0] = coordinate.origin;
     for(int i = 1; i < numberOfPoints; i++){
-        points[i] = points[i - 1] + coordinate.space * coordinate.mesh.igrid[i - 1];
+        points[i] = points[i - 1] + coordinate.space * coordinate.mesh.grid[i - 1];
     }
     return points;
 }
@@ -60,11 +60,11 @@ Point3D getPoint3D(Point3D point, Coordinate3D coordinate){
     return finePoint;
 }
 
-Mesh1D createMesh1D(int numberOfNode, int *igrid){
+Mesh1D createMesh1D(int numberOfNode, int *grid){
     Mesh1D mesh;
     mesh.numberOfNode = numberOfNode;
-	mesh.igrid = calloc(numberOfNode - 1, sizeof(int));
-    memcpy(mesh.igrid, igrid, sizeof(int) * (numberOfNode - 1));
+	mesh.grid = calloc(numberOfNode - 1, sizeof(int));
+    memcpy(mesh.grid, grid, sizeof(int) * (numberOfNode - 1));
     return mesh;
 }
 
@@ -83,8 +83,8 @@ Mesh3D createMesh3D(Point3D numberOfNode, int *gridx, int *gridy, int *gridz){
 void copyMesh1D(Mesh1D *dest_mesh, Mesh1D *src_mesh){
     int size = src_mesh->numberOfNode;
     dest_mesh->numberOfNode = src_mesh->numberOfNode;
-    dest_mesh->igrid = malloc(sizeof(int) * (size - 1));
-    memcpy(dest_mesh->igrid, src_mesh->igrid, sizeof(int) * (size - 1));
+    dest_mesh->grid = malloc(sizeof(int) * (size - 1));
+    memcpy(dest_mesh->grid, src_mesh->grid, sizeof(int) * (size - 1));
 }
 
 
@@ -211,10 +211,10 @@ void setGrid(Mesh3D *mesh, char *spec_file){
 
 }
 
-int getNumberOfFine(int numberOfNode, int *igrid){
+int getNumberOfFine(int numberOfNode, int *grid){
     int sum = 1;
     for(int i = 0; i < numberOfNode - 1; i++){
-        sum += igrid[i];
+        sum += grid[i];
     }
     return sum;
 }

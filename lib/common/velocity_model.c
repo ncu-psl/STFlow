@@ -10,8 +10,8 @@ void readVelocityModel1D(char *model1D_path, velocityModel1D *vpModel, velocityM
 	}
 	vpModel->velocity = (float *)calloc(MAX1D, sizeof(float));
 	vsModel->velocity = (float *)calloc(MAX1D, sizeof(float));
-	vpModel->coordinate.mesh.igrid = (int *)calloc(MAX1D, sizeof(int));
-	vsModel->coordinate.mesh.igrid = (int *)calloc(MAX1D, sizeof(int));
+	vpModel->coordinate.mesh.grid = (int *)calloc(MAX1D, sizeof(int));
+	vsModel->coordinate.mesh.grid = (int *)calloc(MAX1D, sizeof(int));
 	
 	char aline[MAXSTRLEN + 1];
 	char pval[MAXSTRLEN + 1];
@@ -58,8 +58,8 @@ void readVelocityModel1D(char *model1D_path, velocityModel1D *vpModel, velocityM
 		vpModel->coordinate.origin = h;
 		vsModel->coordinate.origin = h;
 	}else{
-		vpModel->coordinate.mesh.igrid[count - 1] = h - tmp;
-		vsModel->coordinate.mesh.igrid[count - 1] = h - tmp;
+		vpModel->coordinate.mesh.grid[count - 1] = h - tmp;
+		vsModel->coordinate.mesh.grid[count - 1] = h - tmp;
 	}
 	tmp = h;
 	//interp[count] = pval[0];
@@ -256,12 +256,12 @@ void freeModel3D(velocityModel3D *model){
 
 void freeModel1D(velocityModel1D *model){
 	free(model->velocity);
-	free(model->coordinate.mesh.igrid);
+	free(model->coordinate.mesh.grid);
 }
 
 velocityModel1D *createModel1D(){
 	velocityModel1D *model = malloc(sizeof(velocityModel1D));
 	model->velocity = NULL;
-	model->coordinate.mesh.igrid = NULL;
+	model->coordinate.mesh.grid = NULL;
 	return model;
 }
