@@ -307,8 +307,8 @@ class VelocityModelBuilder():
         cooarseCoordinate1D = Coordinate1D().create(coarseMesh1D, zSpace, zOrigin)
         coarseVpModel1D = self.vp_model1D.transform(cooarseCoordinate1D)
         coarseVsModel1D = self.vs_model1D.transform(cooarseCoordinate1D)
-        CoarseVpModel3D = VelocityModel3D().create(coarse_coordinate3D, coarseVpModel1D)
-        CoarseVsModel3D = VelocityModel3D().create(coarse_coordinate3D, coarseVsModel1D)
+        CoarseVpModel3D = VelocityModel3D().generateFrom1D(coarse_coordinate3D, coarseVpModel1D)
+        CoarseVsModel3D = VelocityModel3D().generateFrom1D(coarse_coordinate3D, coarseVsModel1D)
         fineVpModel3D = CoarseVpModel3D.transform(fine_coordinate3D)
         fineVsModel3D = CoarseVsModel3D.transform(fine_coordinate3D)
         return CoarseVpModel3D, CoarseVsModel3D, fineVpModel3D, fineVsModel3D

@@ -60,7 +60,7 @@ class VelocityModel3D(VelocityModel):
         self.modelField = None
         self.modelFieldPtr = None
 
-    def create(self, coordinate3D, model1D):
+    def generateFrom1D(self, coordinate3D, model1D):
         model3D = VelocityModel3D()
         model3D.modelField = _FDtomoC.lib.create3DModel(coordinate3D.coordinateField, model1D.modelField)
         model3D.coordinate.coordinateField = model3D.modelField.coordinate
