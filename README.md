@@ -33,6 +33,7 @@ export CC=gcc
 bash build.sh
 
 # For linking c libraries to python extension module, you'll need to add path of libraries to LD_LIBRARY_PATH.
+# <path to STFlow> is where you want STFlow to exists. 
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:<<path to STFlow>>/build/lib/common
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:<<path to STFlow>>/build/lib/FDtomo
 
