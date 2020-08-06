@@ -259,9 +259,23 @@ void freeModel1D(velocityModel1D *model){
 	free(model->coordinate.mesh.grid);
 }
 
-velocityModel1D *createModel1D(){
-	velocityModel1D *model = malloc(sizeof(velocityModel1D));
-	model->velocity = NULL;
-	model->coordinate.mesh.grid = NULL;
+velocityModel1D createModel1D(Coordinate1D coordinate, float *velocity){
+	velocityModel1D model;
+	model.velocity = malloc(sizeof(float) * coordinate.mesh.numberOfNode);
+	memcpy(model.velocity, velocity, sizeof(float) * coordinate.mesh.numberOfNode);
+	model.coordinate.origin = coordinate.origin;
+	model.coordinate.space = coordinate.space;
+	copyMesh1D(&model.coordinate.mesh, &coordinate.mesh);
+	return model;
+}
+
+velocityModel3D createModel3D(Coordinate3D coordinate, float* velocity){
+	velocityModel3D model;
+	int meshSize3D = sizeOfMesh3D(coordinate.mesh);
+	model.velocity = malloc(sizeof(float) * meshSize3D);
+	memcpy(model.velocity, velocity, sizeof(float) * meshSize3D);
+	model.coordinate.origin = coordinate.origin;
+	model.coordinate.space = coordinate.space;
+	copyMesh3D(&model.coordinate.mesh, &coordinate.mesh);
 	return model;
 }

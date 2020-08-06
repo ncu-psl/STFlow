@@ -41,8 +41,9 @@ def model_header():
     void output3DModel(velocityModel3D, char *);
     void freeModel3D(velocityModel3D *);
     void freeModel1D(velocityModel1D *);
-    velocityModel1D *createModel1D();
-    void makenewmod(Coordinate3D, velocityModel3D *, velocityModel3D *, RUNLSQR_DATA *, int, MakenewmodEnv, CommonEnv);
+    velocityModel1D createModel1D(Coordinate1D, float*);
+    velocityModel3D createModel3D(Coordinate3D, float*);
+    void makenewmod(Coordinate3D, velocityModel3D *, velocityModel3D *, RUNLSQR_DATA *, int, MakenewmodEnv, CommonEnv);  
     '''
 
     return typedef + func

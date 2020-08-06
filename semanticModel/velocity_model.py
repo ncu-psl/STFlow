@@ -47,6 +47,11 @@ class VelocityModel1D(VelocityModel):
         model.modelField = _FDtomoC.lib.transform1D(coordinate1D.coordinateField, self.modelField, tmp)
         return model        
         
+    def getField(self):
+        coodinateField = self.coordinate.getField()
+        velocity = _FDtomoC.ffi.new("float[]", self.velocity)
+        modelField = _FDtomoC.lib.createModel3D(coodinateField, velocity)
+
     def getClass(self):
         self.coordinate.getClass()
         size = self.coordinate.mesh.numberOfNode
@@ -96,6 +101,11 @@ class VelocityModel3D(VelocityModel):
         _FDtomoC.lib.makenewmod(corField, vpModelFieldPtr, vsModelFieldPtr, perturbationField, table_size, makenewmodEnvField, commonEnvField)
         vp_model.modelField = vpModelFieldPtr[0]
         vs_model.modelField = vsModelFieldPtr[0]
+
+    def getField(self):
+        coodinateField = self.coordinate.getField()
+        velocity = _FDtomoC.ffi.new("float[]", self.velocity)
+        modelField = _FDtomoC.lib.createModel3D(coodinateField, velocity)
 
     def getClass(self):
         self.coordinate.getClass()
