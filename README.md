@@ -1,5 +1,5 @@
 # STFlow
-* STFlow is the tool for seismic tomography that provides a high performance and abstraction of DSL. 
+STFlow is a Python library for performing seismic tomography tasks. It provides a higher-level abstraction while supporting OpenMP and MPI modes. 
 
 ## How to download
 ```bash
@@ -10,12 +10,12 @@ git clone https://github.com/ncu-psl/STFlow.git
 cd STFlow
 ```
 ## Dependencies
-The following tools should be installed and available on the machine executable / library search path:
+The following tools should be installed on the machine and available from the executable/library search path:
 * gcc/icc compiler
 * python interpreter
 * cmake
-* A functional MPI 1.x/2.x/3.x implementation like MPICH or Open MPI built with shared/dynamic libraries.
-* Needed python packages.
+* A functional MPI 1.x/2.x/3.x implementation like MPICH or Open MPI built with shared/dynamic libraries
+* Needed python packages
   * CFFI
   * mpi4py
 
@@ -40,13 +40,7 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:<<path to STFlow>>/build/lib/FDtomo
 ```
 
 ## How to use
-STFlow在設計上，必須以TomographyBuilder()當作開頭，然後必需要依序呼叫method:
-* Environment() 
-* Event() 
-* Station() 
-* VelocityModel()
-我們必須傳入給這些method，STFlow規定的元件，如下列程式碼:
-
+The kernel of STFlow code is actually one line of code, for example:
 ```python
 TomographyBuilder() \  
   .Environment(environment) \  
@@ -56,8 +50,14 @@ TomographyBuilder() \
   .execute(mode = 'Seq', count = 1)   
 
 ```
-而為了要讓STFlow更多的表達方式，我們希望一個method可以被替換成其它method。因此我們以元件間的相關性當作依據，判定一個method可不可以再進一步展開。舉例來說，速度模型(velocityModel)可以被座標(coordinate)及一維速度模型(velocityModel1D)建構而成，因此我們在使用上，VelocityModel()這個method就可以改寫成Coordinate()、ReferenceModel()。不過在使用上，我們仍然需要呼叫VelocityModel()，但是不需要給予他參數，而是給予Coordinate()、ReferenceModel()需要的資料(coordinate、velocityModel1D)即可，這樣是希望使用者可以知道這些method之間的關係，在撰寫上時如果發生錯誤，像是method的順序發生顛倒，相對容易發現錯誤的地方，如下列程式碼:
+A valid STFlow code should start with TomographyBuilder(), call the following methods in order, and finish with execute():
+* Environment() 
+* Event() 
+* Station() 
+* VelocityModel()
 
+These method calls can be regarded as language elements describing a seismic tomography task with earthquake events and seismic stations.
+An element may be further replaced with other elements according the semantics of STFlow, for example, the velocity model can be constructed by a coordinate system and a reference model as well:
 ```python
 TomographyBuilder() \  
   .Environment(environment) \  
@@ -69,7 +69,10 @@ TomographyBuilder() \
   .execute(mode = 'Seq', count = 1)   
 
 ```
-而上述的的參數，可能不只含有一種資料型態，詳細內容請參考wiki。
+where VelocityModel(velocitModel3D) is replaced with Coordinate(coordinate) and ReferenceModel(velocityModel1D).
+This design benefits from method chaining and the implementation of every method is checking the parameters rather than carrying out the computation; the task will not start before execute() is called. STFlow can be regarded as a domain-specific language embedded in Python.
+
+Several examples we used in our experiments can be found in the demo folder. For the grammar and arguments, please refer to the wiki page.
 
 ## Example :
 
