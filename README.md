@@ -56,7 +56,7 @@ A valid STFlow code should start with TomographyBuilder(), call the following me
 * Station() 
 * VelocityModel()
 
-These method calls can be regarded as language elements describing a seismic tomography task with earthquake events and seismic stations.
+These method calls can be regarded as language elements describing a seismic tomography task with earthquake events, seismic stations, and a velocity model.
 An element may be further replaced with other elements according the semantics of STFlow, for example, the velocity model can be constructed by a coordinate system and a reference model as well:
 ```python
 TomographyBuilder() \  
